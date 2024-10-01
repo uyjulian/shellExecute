@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <process.h>
-#include "ncbind/ncbind.hpp"
+#include "ncbind.hpp"
 
 #define WM_SHELLEXECUTED   (WM_APP+1)
 #define WM_SHELLCONSOLEOUT (WM_APP+2)
