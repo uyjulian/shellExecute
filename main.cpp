@@ -442,7 +442,7 @@ public:
 	 * シグナル送信
 	 */
 	bool commandSendSignal(tjs_int64 process, bool type) {
-		ULONG_PTR id = getProcessMap((HANDLE)(tjs_intptr_t)process);
+		DWORD id = getProcessMap((HANDLE)(tjs_intptr_t)process);
 		DWORD ev = type ? CTRL_BREAK_EVENT : CTRL_C_EVENT;
 
 		BOOL r = ::GenerateConsoleCtrlEvent(ev, id);
@@ -458,11 +458,11 @@ public:
 		}
 		return !!r;
 	}
-	void  setProcessMap(HANDLE proc, DWORD id) { pmap.SetValue((tjs_int64)(tjs_intptr_t)proc, (tTVInteger)id); }
-	ULONG_PTR getProcessMap(HANDLE proc)  { return (ULONG_PTR)(pmap.getIntValue((tjs_int64)(tjs_intptr_t)proc, -1)); }
+	void  setProcessMap(HANDLE proc, ULONG_PTR id) { pmap.SetValue((tTVInteger)(tjs_intptr_t)proc, (tTVInteger)id); }
+	DWORD getProcessMap(HANDLE proc)  { return (DWORD)(pmap.getIntValue((tTVInteger)(tjs_intptr_t)proc, -1)); }
 	void removeProcessMap(HANDLE proc) {
 		iTJSDispatch2 *dsp = pmap.GetDispatch();
-		dsp->DeleteMemberByNum(0, (tjs_int64)(tjs_intptr_t)proc, dsp);
+		dsp->DeleteMemberByNum(0, (tTVInteger)(tjs_intptr_t)proc, dsp);
 	}
 static void getLastError(ttstr &message) {
 	LPVOID lpMessageBuffer;
