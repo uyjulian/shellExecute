@@ -363,7 +363,7 @@ public:
 	 * @param process プロセスID
 	 * @param endCode 終了コード
 	 */
-	void terminateProcess(tjs_int64 process, int endCode) {
+	void terminateProcess(tTVInteger process, int endCode) {
 		TerminateProcess((HANDLE)(tjs_intptr_t)process, endCode);
 	}
 
@@ -372,7 +372,7 @@ public:
 	 * @param target ターゲット
 	 * @praam param パラメータ
 	 */
-	tjs_int64 shellExecute(LPCTSTR target, LPCTSTR param) {
+	tTVInteger shellExecute(LPCTSTR target, LPCTSTR param) {
 		SHELLEXECUTEINFO si;
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(si);
@@ -383,9 +383,9 @@ public:
 		si.fMask = SEE_MASK_FLAG_NO_UI | SEE_MASK_NOCLOSEPROCESS;
 		if (ShellExecuteEx(&si)) {
 			_beginthread(waitProcess, 0, new ExecuteInfo(msgHWND, si.hProcess));
-			return (tjs_int64)(tjs_intptr_t)si.hProcess;
+			return (tTVInteger)(tjs_intptr_t)si.hProcess;
 		}
-		return (tjs_int64)(tjs_intptr_t)INVALID_HANDLE_VALUE;
+		return (tTVInteger)(tjs_intptr_t)INVALID_HANDLE_VALUE;
 	}
 
 
@@ -425,23 +425,23 @@ public:
 	 * @param target ターゲット
 	 * @praam param パラメータ
 	 */
-	tjs_int64 commandExecute(ttstr target, ttstr param) {
+	tTVInteger commandExecute(ttstr target, ttstr param) {
 		CommandExecute *cmd = new CommandExecute();
 		if (cmd->start(target, param)) {
 			HANDLE proc = cmd->getProcessHandle();
 			setProcessMap(proc, cmd->getProcessId());
 			_beginthread(waitCommand, 0, new ExecuteInfo(msgHWND, proc, cmd));
-			return (tjs_int64)(tjs_intptr_t)proc;
+			return (tTVInteger)(tjs_intptr_t)proc;
 		}
 		delete cmd;
-		return (tjs_int64)(tjs_intptr_t)INVALID_HANDLE_VALUE;
+		return (tTVInteger)(tjs_intptr_t)INVALID_HANDLE_VALUE;
 	}
 
 
 	/**
 	 * シグナル送信
 	 */
-	bool commandSendSignal(tjs_int64 process, bool type) {
+	bool commandSendSignal(tTVInteger process, bool type) {
 		DWORD id = getProcessMap((HANDLE)(tjs_intptr_t)process);
 		DWORD ev = type ? CTRL_BREAK_EVENT : CTRL_C_EVENT;
 
@@ -458,7 +458,7 @@ public:
 		}
 		return !!r;
 	}
-	void  setProcessMap(HANDLE proc, ULONG_PTR id) { pmap.SetValue((tTVInteger)(tjs_intptr_t)proc, (tTVInteger)id); }
+	void  setProcessMap(HANDLE proc, DWORD id) { pmap.SetValue((tTVInteger)(tjs_intptr_t)proc, (tTVInteger)id); }
 	DWORD getProcessMap(HANDLE proc)  { return (DWORD)(pmap.getIntValue((tTVInteger)(tjs_intptr_t)proc, -1)); }
 	void removeProcessMap(HANDLE proc) {
 		iTJSDispatch2 *dsp = pmap.GetDispatch();
